@@ -4,16 +4,16 @@ declare(strict_types=1);
 
 namespace MediaWiki\Storage;
 
-use Illuminate\Cache\Repository;
+use Illuminate\Contracts\Cache\Repository;
 
 class LaravelCache implements StorageInterface
 {
     /**
      * The file cache directory.
      *
-     * @var Illuminate\Cache\Repository
+     * @var Repository
      */
-    protected $cache;
+    protected $repository;
 
     /**
      * @var string
@@ -23,29 +23,13 @@ class LaravelCache implements StorageInterface
     /**
      * Constructor.
      *
-     * @param Illuminate\Cache\Repository $cache
+     * @param Repository $cache
      * @param string $prefix
      */
-    public function __construct(Repository $cache, $prefix = '')
+    public function __construct(Repository $cache, string $prefix = '')
     {
-        $this->cache = $cache;
+        $this->repository = $cache;
         $this->prefix = $prefix;
-    }
-
-    /**
-     * @return Illuminate\Cache\Repository
-     */
-    public function getCache()
-    {
-        return $this->cache;
-    }
-
-    /**
-     * @return string
-     */
-    public function getPrefix()
-    {
-        return $this->prefix;
     }
 
     /**
@@ -56,58 +40,58 @@ class LaravelCache implements StorageInterface
      *
      * @return mixed
      */
-    public function get($key, $default = null)
+    public function get(string $key, $default = null)
     {
-        return $this->cache->get($this->prefix.$key, $default);
+        return $this->repository->get($this->prefix.$key, $default);
     }
 
     /**
      * Store an item in the cache for a given number of minutes.
      *
      * @param string $key
-     * @param mixed  $value
-     * @param int    $minutes
+     * @param mixed $value
+     * @param int $minutes
      */
-    public function put($key, $value, $minutes)
+    public function put(string $key, $value, int $minutes): void
     {
-        $this->cache->put($this->prefix.$key, $value, $minutes);
+        $this->repository->put($this->prefix.$key, $value, $minutes);
     }
 
     /**
      * Increment the value of an item in the cache.
      *
      * @param string $key
-     * @param mixed  $value
+     * @param int $value
      *
      * @return int
      */
-    public function increment($key, $value = 1)
+    public function increment(string $key, int $value = 1): int
     {
-        return $this->cache->increment($this->prefix.$key, $value);
+        return $this->repository->increment($this->prefix . $key, $value);
     }
 
     /**
      * Decrement the value of an item in the cache.
      *
      * @param string $key
-     * @param mixed  $value
+     * @param int $value
      *
      * @return int
      */
-    public function decrement($key, $value = 1)
+    public function decrement(string $key, int $value = 1): int
     {
-        return $this->cache->decrement($this->prefix.$key, $value);
+        return $this->repository->decrement($this->prefix . $key, $value);
     }
 
     /**
      * Store an item in the cache indefinitely.
      *
      * @param string $key
-     * @param mixed  $value
+     * @param mixed $value
      */
-    public function forever($key, $value)
+    public function forever(string $key, $value): void
     {
-        $this->cache->forever($this->prefix.$key, $value);
+        $this->repository->forever($this->prefix.$key, $value);
     }
 
     /**
@@ -117,16 +101,32 @@ class LaravelCache implements StorageInterface
      *
      * @return bool
      */
-    public function forget($key)
+    public function forget(string $key): bool
     {
-        return $this->cache->forget($this->prefix.$key);
+        return $this->repository->forget($this->prefix.$key);
     }
 
     /**
      * Remove all items from the cache.
      */
-    public function flush()
+    public function flush(): void
     {
-        $this->cache->flush();
+        $this->repository->flush();
+    }
+
+    /**
+     * @return Repository
+     */
+    public function getRepository(): Repository
+    {
+        return $this->repository;
+    }
+
+    /**
+     * @return string
+     */
+    public function getPrefix(): string
+    {
+        return $this->prefix;
     }
 }

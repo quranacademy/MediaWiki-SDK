@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace MediaWiki\Bot;
 
-use MediaWiki\Helpers;
 use MediaWiki\Project\Project;
 use MediaWiki\Project\ProjectFactoryInterface;
+use MediaWiki\Utils\Str;
 use RuntimeException;
 
 class ProjectManager
@@ -87,7 +87,7 @@ class ProjectManager
 
         require_once $filename;
 
-        $projectClassName = sprintf('%s\%s', $this->namespace, Helpers\pascal_case($projectName));
+        $projectClassName = sprintf('%s\%s', $this->namespace, Str::pascalCase($projectName));
 
         $apiUrls = call_user_func([$projectClassName, 'getApiUrls']);
 
@@ -114,7 +114,7 @@ class ProjectManager
 
             require_once sprintf('%s/%s', $this->projectsDirectory, $filename);
 
-            $projectClassName = Helpers\pascal_case(basename($filename, '.php'));
+            $projectClassName = Str::pascalCase(basename($filename, '.php'));
 
             $projects[] = $this->projectFactory->createProject($projectClassName);
         }

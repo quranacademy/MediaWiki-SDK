@@ -15,7 +15,9 @@
         "phpunit/phpunit": "^7.0",
         "mockery/mockery": "^1.2",
         "mikey179/vfsstream": "^1.6",
-        "friendsofphp/php-cs-fixer": "^2.15"
+        "friendsofphp/php-cs-fixer": "^2.15",
+        "illuminate/contracts": "^6.0",
+        "guzzlehttp/guzzle": "^6.3"
     },
     "authors": [
         {
@@ -26,10 +28,7 @@
     "autoload": {
         "psr-4": {
             "MediaWiki\\": "src/MediaWiki/"
-        },
-        "files": [
-            "src/MediaWiki/helpers.php"
-        ]
+        }
     },
     "autoload-dev": {
         "psr-4": {

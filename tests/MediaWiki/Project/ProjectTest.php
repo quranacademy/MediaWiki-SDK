@@ -7,7 +7,7 @@ namespace MediaWiki\Tests\MediaWiki\Project;
 use MediaWiki\Api\Api;
 use MediaWiki\Api\ApiCollection;
 use MediaWiki\HttpClient\HttpClientInterface;
-use MediaWiki\Services\ServiceManager;
+use MediaWiki\ApiHelpers\ApiHelpers;
 use MediaWiki\Storage\StorageInterface;
 use MediaWiki\Tests\Stubs\ExampleProject;
 use MediaWiki\Tests\TestCase;
@@ -18,9 +18,9 @@ class ProjectTest extends TestCase
     public function testGetName(): void
     {
         $apiCollection = new ApiCollection();
-        $serviceManager = new ServiceManager($apiCollection);
+        $apiHelpers = new ApiHelpers($apiCollection);
 
-        $project = new ExampleProject($apiCollection, $serviceManager);
+        $project = new ExampleProject($apiCollection, $apiHelpers);
 
         $this->assertEquals('foo', $project->getName());
     }
@@ -28,9 +28,9 @@ class ProjectTest extends TestCase
     public function testGetTitle(): void
     {
         $apiCollection = new ApiCollection();
-        $serviceManager = new ServiceManager($apiCollection);
+        $apiHelpers = new ApiHelpers($apiCollection);
 
-        $project = new ExampleProject($apiCollection, $serviceManager);
+        $project = new ExampleProject($apiCollection, $apiHelpers);
 
         $this->assertEquals('Foo', $project->getTitle());
     }
@@ -38,9 +38,9 @@ class ProjectTest extends TestCase
     public function testGetDefaultLanguage(): void
     {
         $apiCollection = new ApiCollection();
-        $serviceManager = new ServiceManager($apiCollection);
+        $apiHelpers = new ApiHelpers($apiCollection);
 
-        $project = new ExampleProject($apiCollection, $serviceManager);
+        $project = new ExampleProject($apiCollection, $apiHelpers);
 
         $this->assertEquals('en', $project->getDefaultLanguage());
     }
@@ -48,9 +48,9 @@ class ProjectTest extends TestCase
     public function testGetApiCollection(): void
     {
         $apiCollection = new ApiCollection();
-        $serviceManager = new ServiceManager($apiCollection);
+        $apiHelpers = new ApiHelpers($apiCollection);
 
-        $project = new ExampleProject($apiCollection, $serviceManager);
+        $project = new ExampleProject($apiCollection, $apiHelpers);
 
         $this->assertEquals($apiCollection, $project->getApiCollection());
     }
@@ -58,9 +58,9 @@ class ProjectTest extends TestCase
     public function testAddApi(): void
     {
         $apiCollection = new ApiCollection();
-        $serviceManager = new ServiceManager($apiCollection);
+        $apiHelpers = new ApiHelpers($apiCollection);
 
-        $project = new ExampleProject($apiCollection, $serviceManager);
+        $project = new ExampleProject($apiCollection, $apiHelpers);
 
         $enApi = $this->createApi();
         $ruApi = $this->createApi();
@@ -82,9 +82,9 @@ class ProjectTest extends TestCase
         $apiCollection->add('en', $enApi);
         $apiCollection->add('ru', $ruApi);
 
-        $serviceManager = new ServiceManager($apiCollection);
+        $apiHelpers = new ApiHelpers($apiCollection);
 
-        $project = new ExampleProject($apiCollection, $serviceManager);
+        $project = new ExampleProject($apiCollection, $apiHelpers);
 
         $this->assertEquals($enApi, $project->api('en'));
         $this->assertEquals($ruApi, $project->api('ru'));

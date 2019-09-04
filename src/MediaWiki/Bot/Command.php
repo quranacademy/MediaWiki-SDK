@@ -181,7 +181,7 @@ abstract class Command extends SymfonyCommand
      * Call another console command silently.
      *
      * @param string $command
-     * @param array  $arguments
+     * @param array $arguments
      * 
      * @return int
      */
@@ -228,7 +228,7 @@ abstract class Command extends SymfonyCommand
      * Confirm a question with the user.
      *
      * @param string $message
-     * @param bool   $default
+     * @param bool $default
      * 
      * @return string
      */
@@ -254,7 +254,7 @@ abstract class Command extends SymfonyCommand
      * Prompt the user for input with auto completion.
      *
      * @param string $message
-     * @param array  $choices
+     * @param array $choices
      * @param string $default
      * 
      * @return string
@@ -268,7 +268,7 @@ abstract class Command extends SymfonyCommand
      * Prompt the user for input with auto completion.
      *
      * @param string $message
-     * @param array  $choices
+     * @param array $choices
      * @param string $default
      * 
      * @return string

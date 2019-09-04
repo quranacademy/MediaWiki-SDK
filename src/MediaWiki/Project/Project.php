@@ -7,7 +7,7 @@ namespace MediaWiki\Project;
 use LogicException;
 use MediaWiki\Api\ApiCollection;
 use MediaWiki\Api\ApiInterface;
-use MediaWiki\Services\ServiceManager;
+use MediaWiki\ApiHelpers\ApiHelpers;
 
 class Project
 {
@@ -17,9 +17,9 @@ class Project
     protected $api;
 
     /**
-     * @var ServiceManager
+     * @var ApiHelpers
      */
-    protected $services;
+    protected $apiHelpers;
 
     /**
      * @var string
@@ -40,19 +40,18 @@ class Project
      * Constructor.
      *
      * @param ApiCollection $api
-     * @param ServiceManager $services
+     * @param ApiHelpers $apiHelpers
      */
-    public function __construct(ApiCollection $api, ServiceManager $services)
+    public function __construct(ApiCollection $api, ApiHelpers $apiHelpers)
     {
         $this->api = $api;
-
-        $this->services = $services;
+        $this->apiHelpers = $apiHelpers;
     }
 
     /**
      * @return string
      */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
@@ -60,27 +59,23 @@ class Project
     /**
      * @return string
      */
-    public function getTitle()
+    public function getTitle(): string
     {
         return $this->title;
     }
 
     /**
      * @param string
-     *
-     * @return Project
      */
-    public function setDefaultLanguage($language)
+    public function setDefaultLanguage($language): void
     {
         $this->defaultLanguage = $language;
-
-        return $this;
     }
 
     /**
      * @return string
      */
-    public function getDefaultLanguage()
+    public function getDefaultLanguage(): string
     {
         return $this->defaultLanguage;
     }
@@ -89,7 +84,7 @@ class Project
      * @param string $language
      * @param ApiInterface $api
      */
-    public function addApi($language, ApiInterface $api)
+    public function addApi($language, ApiInterface $api): void
     {
         $this->api->add($language, $api);
     }
@@ -99,7 +94,7 @@ class Project
      *
      * @return ApiInterface
      */
-    public function api($language = null)
+    public function api($language = null): ApiInterface
     {
         if ($language === null && $this->defaultLanguage === null) {
             throw new LogicException('Please, specify language of API or default language of project');
@@ -111,59 +106,25 @@ class Project
     }
 
     /**
-     * @param string $name
-     *
-     * @return \MediaWiki\Services\Service
-     */
-    public function service($name)
-    {
-        return $this->services->getService($name);
-    }
-
-    /**
-     * @param ApiCollection $api
-     *
-     * @return Project
-     */
-    public function setApiCollection(ApiCollection $api)
-    {
-        $this->api = $api;
-
-        return $this;
-    }
-
-    /**
      * @return ApiCollection
      */
-    public function getApiCollection()
+    public function getApiCollection(): ApiCollection
     {
         return $this->api;
     }
 
     /**
-     * @param ServiceManager $services
-     *
-     * @return Project
+     * @return ApiHelpers
      */
-    public function setServiceManager(ServiceManager $services)
+    public function helpers(): ApiHelpers
     {
-        $this->services = $services;
-
-        return $this;
-    }
-
-    /**
-     * @return ServiceManager
-     */
-    public function getServiceManager()
-    {
-        return $this->services;
+        return $this->apiHelpers;
     }
 
     /**
      * @return array
      */
-    public static function getApiUrls()
+    public static function getApiUrls(): array
     {
         return [];
     }
@@ -171,7 +132,7 @@ class Project
     /**
      * @return array
      */
-    public static function getApiUsernames()
+    public static function getApiUsernames(): array
     {
         return [];
     }

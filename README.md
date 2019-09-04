@@ -5,6 +5,8 @@
 [![Latest Stable Version](https://poser.pugx.org/quranacademy/mediawiki-sdk/v/stable)](https://packagist.org/packages/quranacademy/mediawiki-sdk)
 [![License](https://poser.pugx.org/quranacademy/mediawiki-sdk/license)](https://packagist.org/packages/quranacademy/mediawiki-sdk)
 
+**WARNING:** the SDK is not production ready.
+
 MediaWiki SDK - библиотека для работы с API MediaWiki.
 
 Минимальная версия MediaWiki: 1.27+.

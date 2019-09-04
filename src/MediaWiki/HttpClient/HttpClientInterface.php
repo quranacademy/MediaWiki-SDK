@@ -19,9 +19,9 @@ interface HttpClientInterface
      *
      * @param string $method
      * @param string $url
-     * @param array  $parameters
-     * @param array  $headers
-     * @param array  $cookies
+     * @param array $parameters
+     * @param array $headers
+     * @param array $cookies
      *
      * @return string
      */
@@ -32,8 +32,8 @@ interface HttpClientInterface
      *
      * @param string $url
      * @param array $parameters
-     * @param array  $headers
-     * @param array  $cookies
+     * @param array $headers
+     * @param array $cookies
      *
      * @return string
      */
@@ -44,8 +44,8 @@ interface HttpClientInterface
      *
      * @param string $url
      * @param array $parameters
-     * @param array  $headers
-     * @param array  $cookies
+     * @param array $headers
+     * @param array $cookies
      *
      * @return string
      */

@@ -8,7 +8,7 @@ use InvalidArgumentException;
 use MediaWiki\Api\Api;
 use MediaWiki\Api\ApiCollection;
 use MediaWiki\HttpClient\HttpClientInterface;
-use MediaWiki\Services\ServiceManager;
+use MediaWiki\ApiHelpers\ApiHelpers;
 use MediaWiki\Storage\StorageInterface;
 use RuntimeException;
 
@@ -75,8 +75,8 @@ class ProjectFactory implements ProjectFactoryInterface
             $apiCollection->add($language, $api);
         }
 
-        $serviceManager = new ServiceManager($apiCollection);
+        $apiHelpers = new ApiHelpers($apiCollection);
 
-        return new $projectClassName($apiCollection, $serviceManager);
+        return new $projectClassName($apiCollection, $apiHelpers);
     }
 }

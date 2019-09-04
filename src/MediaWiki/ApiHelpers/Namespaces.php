@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace MediaWiki\Services;
+namespace MediaWiki\ApiHelpers;
 
-class Namespaces extends Service
+class Namespaces extends ApiHelper
 {
     /**
      * Retrieves list of namespaces.
@@ -13,7 +13,7 @@ class Namespaces extends Service
      * 
      * @return array
      */
-    public function getList($language)
+    public function getList($language): array
     {
         $parameters = [
             'meta' => 'siteinfo',

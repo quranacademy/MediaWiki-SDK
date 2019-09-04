@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace MediaWiki\Services;
+namespace MediaWiki\ApiHelpers;
 
 use Psr\Log\InvalidArgumentException;
 
-class Pages extends Service
+class Pages extends ApiHelper
 {
     /**
      * @var array
@@ -15,13 +15,13 @@ class Pages extends Service
 
     /**
      * @param string $language
-     * @param string $continue
-     * @param string $apcontinue
-     * @param array $extParameters
+     * @param string|null $continue
+     * @param string|null $apcontinue
+     * @param array $additionalParameters
      * 
      * @return array
      */
-    public function getList($language, $continue = null, $apcontinue = null, $extParameters = [])
+    public function getList(string $language, ?string $continue = null, ?string $apcontinue = null, array $additionalParameters = []): array
     {
         $parameters = [
             'list' => 'allpages',
@@ -32,7 +32,7 @@ class Pages extends Service
             $parameters['apcontinue'] = $apcontinue;
         }
 
-        $parameters = array_merge($parameters, $extParameters);
+        $parameters = array_merge($parameters, $additionalParameters);
 
         $response = $this->api($language)->query($parameters);
 
@@ -54,44 +54,64 @@ class Pages extends Service
     /**
      * @param string $language
      * @param string $title
-     * @param array $properties
-     * @param array $extParameters
+     * @param array|string $properties
+     * @param array $additionalParameters
      * 
-     * @return array
+     * @return array|null
      */
-    public function loadPage($language, $title, $properties = null, $extParameters = [])
+    public function getPageByTitle(string $language, string $title, array $properties = [], array $additionalParameters = []): ?array
     {
         if ($title === '') {
             throw new InvalidArgumentException(sprintf('Title must not be empty (%s)', $language));
         }
 
-        if (is_array($properties)) {
-            $properties = implode('|', $properties);
-        }
-
         $parameters = [
             'titles' => $title,
-            'prop' => $properties,
+            'prop' => implode('|', $properties),
         ];
 
-        $parameters = array_merge($parameters, $extParameters);
+        $parameters = array_merge($parameters, $additionalParameters);
 
         $response = $this->api($language)->query($parameters);
 
-        $page = array_shift($response['query']['pages']);
+        return array_shift($response['query']['pages']);
+    }
 
-        return $page;
+    /**
+     * @param string $language
+     * @param int $pageId
+     * @param array|string $properties
+     * @param array $additionalParameters
+     *
+     * @return array|null
+     */
+    public function getPageById(string $language, int $pageId, array $properties = [], array $additionalParameters = []): ?array
+    {
+        if ($pageId === '') {
+            throw new InvalidArgumentException(sprintf('Title must not be empty (%s)', $language));
+        }
+
+        $parameters = [
+            'pageids' => $pageId,
+            'prop' => implode('|', $properties),
+        ];
+
+        $parameters = array_merge($parameters, $additionalParameters);
+
+        $response = $this->api($language)->query($parameters);
+
+        return array_shift($response['query']['pages']);
     }
 
     /**
      * @param string $language
      * @param string $title
      * @param string $content
-     * @param array $extParameters
+     * @param array $additionalParameters
      * 
      * @return array
      */
-    public function savePage($language, $title, $content, $extParameters = [])
+    public function savePage(string $language, string $title, string $content, array $additionalParameters = []): array
     {
         $token = $this->getCsrfToken($language);
 
@@ -104,7 +124,7 @@ class Pages extends Service
             'token' => $token,
         ];
 
-        $parameters = array_merge($parameters, $extParameters);
+        $parameters = array_merge($parameters, $additionalParameters);
 
         return $this->api($language)->request('POST', $parameters);
     }
@@ -112,12 +132,12 @@ class Pages extends Service
     /**
      * @param string $language
      * @param string $title
-     * @param string|array $properties
-     * @param array $extParameters
+     * @param array|string $properties
+     * @param array $additionalParameters
      * 
      * @return array
      */
-    public function parse($language, $title, $properties = [], $extParameters = [])
+    public function parse(string $language, string $title, $properties = [], array $additionalParameters = []): array
     {
         $properties = is_array($properties) ? implode('|', $properties) : $properties;
 
@@ -132,7 +152,7 @@ class Pages extends Service
             $parameters['prop'] = $properties;
         }
 
-        $parameters = array_merge($parameters, $extParameters);
+        $parameters = array_merge($parameters, $additionalParameters);
 
         return $this->api($language)->request('POST', $parameters);
     }
@@ -142,7 +162,7 @@ class Pages extends Service
      * 
      * @return string
      */
-    protected function getCsrfToken($language)
+    protected function getCsrfToken(string $language): string
     {
         if ( ! array_key_exists($language, $this->tokens)) {
             $parameters = [

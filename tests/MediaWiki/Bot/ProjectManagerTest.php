@@ -7,7 +7,7 @@ namespace MediaWiki\Tests\MediaWiki\Bot;
 use MediaWiki\Api\ApiCollection;
 use MediaWiki\Bot\ProjectManager;
 use MediaWiki\Project\ProjectFactoryInterface;
-use MediaWiki\Services\ServiceManager;
+use MediaWiki\ApiHelpers\ApiHelpers;
 use MediaWiki\Tests\Stubs\ExampleProject;
 use MediaWiki\Tests\TestCase;
 use Mockery;
@@ -83,9 +83,9 @@ class ProjectManagerTest extends TestCase
         $projectFactory = Mockery::mock(ProjectFactoryInterface::class);
 
         $apiCollection = new ApiCollection();
-        $serviceManager = new ServiceManager($apiCollection);
+        $apiHelpers = new ApiHelpers($apiCollection);
 
-        $project = new ExampleProject($apiCollection, $serviceManager);
+        $project = new ExampleProject($apiCollection, $apiHelpers);
 
         $projectFactory->shouldReceive('createProject')->with(
             ExampleProject::getApiUrls(),

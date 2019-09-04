@@ -19,11 +19,11 @@ class ArrayStorage implements StorageInterface
      * 
      * @return mixed
      */
-    public function get($key, $default = null)
+    public function get(string $key, $default = null)
     {
         $array = $this->getPayload($key);
 
-        return $array['data'] === null ? $default : $array['data'];
+        return $array['data'] ?? $default;
     }
 
     /**
@@ -33,7 +33,7 @@ class ArrayStorage implements StorageInterface
      *
      * @return array
      */
-    protected function getPayload($key)
+    protected function getPayload($key): array
     {
         if ( ! array_key_exists($key, $this->storage)) {
             return ['data' => null, 'time' => null];
@@ -49,7 +49,9 @@ class ArrayStorage implements StorageInterface
             return ['data' => null, 'time' => null];
         }
 
-        $data = unserialize(substr($contents, 10));
+        $data = unserialize(substr($contents, 10), [
+            'allowed_classes' => false,
+        ]);
 
         // Next, we'll extract the number of minutes that are remaining for a cache
         // so that we can properly retain the time for things like the increment
@@ -63,10 +65,10 @@ class ArrayStorage implements StorageInterface
      * Store an item in the cache for a given number of minutes.
      *
      * @param string $key
-     * @param mixed  $value
-     * @param int    $minutes
+     * @param mixed $value
+     * @param int $minutes
      */
-    public function put($key, $value, $minutes)
+    public function put(string $key, $value, int $minutes): void
     {
         $value = $this->expiration($minutes).serialize($value);
 
@@ -77,11 +79,11 @@ class ArrayStorage implements StorageInterface
      * Increment the value of an item in the cache.
      *
      * @param string $key
-     * @param mixed  $value
+     * @param int $value
      * 
      * @return int
      */
-    public function increment($key, $value = 1)
+    public function increment(string $key, int $value = 1): int
     {
         $raw = $this->getPayload($key);
 
@@ -96,11 +98,11 @@ class ArrayStorage implements StorageInterface
      * Decrement the value of an item in the cache.
      *
      * @param string $key
-     * @param mixed  $value
+     * @param int $value
      * 
      * @return int
      */
-    public function decrement($key, $value = 1)
+    public function decrement(string $key, int $value = 1): int
     {
         return $this->increment($key, $value * -1);
     }
@@ -109,9 +111,9 @@ class ArrayStorage implements StorageInterface
      * Store an item in the cache indefinitely.
      *
      * @param string $key
-     * @param mixed  $value
+     * @param mixed $value
      */
-    public function forever($key, $value)
+    public function forever(string $key, $value): void
     {
         $this->put($key, $value, 0);
     }
@@ -123,7 +125,7 @@ class ArrayStorage implements StorageInterface
      * 
      * @return bool
      */
-    public function forget($key)
+    public function forget(string $key): bool
     {
         unset($this->storage[$key]);
 
@@ -133,7 +135,7 @@ class ArrayStorage implements StorageInterface
     /**
      * Remove all items from the cache.
      */
-    public function flush()
+    public function flush(): void
     {
         $this->storage = [];
     }
@@ -145,7 +147,7 @@ class ArrayStorage implements StorageInterface
      * 
      * @return int
      */
-    protected function expiration($minutes)
+    protected function expiration(int $minutes): int
     {
         $time = time() + ($minutes * 60);
 

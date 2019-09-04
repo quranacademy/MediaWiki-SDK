@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace MediaWiki\Services;
+namespace MediaWiki\ApiHelpers;
 
-class SiteInfo extends Service
+class SiteInfo extends ApiHelper
 {
     /**
      * @param string $language

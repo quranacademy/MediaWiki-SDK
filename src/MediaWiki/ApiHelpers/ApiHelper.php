@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace MediaWiki\Services;
+namespace MediaWiki\ApiHelpers;
 
 use MediaWiki\Api\ApiCollection;
 use MediaWiki\Api\ApiInterface;
 
-class Service
+class ApiHelper
 {
     /**
      * Constructor.
@@ -24,7 +24,7 @@ class Service
      *
      * @return ApiInterface
      */
-    protected function api(string $language)
+    protected function api(string $language): ApiInterface
     {
         return $this->api->get($language);
     }

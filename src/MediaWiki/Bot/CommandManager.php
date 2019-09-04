@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace MediaWiki\Bot;
 
 use InvalidArgumentException;
-use MediaWiki\Helpers;
 use MediaWiki\Project\Project;
 use MediaWiki\Storage\StorageInterface;
+use MediaWiki\Utils\Str;
 use RuntimeException;
 
 class CommandManager
@@ -86,7 +86,7 @@ class CommandManager
     {
         require_once $this->find($name);
 
-        $class = sprintf('%s\%s', $this->namespace, Helpers\pascal_case($name));
+        $class = sprintf('%s\%s', $this->namespace, Str::pascalCase($name));
 
         return new $class($this->storage, $project, $this);
     }

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace MediaWiki\Storage;
 
+use RuntimeException;
+
 class FileStore implements StorageInterface
 {
     /**
@@ -16,7 +18,7 @@ class FileStore implements StorageInterface
     /**
      * Constructor.
      *
-     * @param string  $directory
+     * @param string $directory
      */
     public function __construct($directory)
     {
@@ -31,11 +33,11 @@ class FileStore implements StorageInterface
      * 
      * @return mixed
      */
-    public function get($key, $default = null)
+    public function get(string $key, $default = null)
     {
         $array = $this->getPayload($key);
 
-        return $array['data'] === null ? $default : $array['data'];
+        return $array['data'] ?? $default;
     }
 
     /**
@@ -45,7 +47,7 @@ class FileStore implements StorageInterface
      *
      * @return array
      */
-    protected function getPayload($key)
+    protected function getPayload(string $key): array
     {
         $path = $this->path($key);
 
@@ -69,7 +71,9 @@ class FileStore implements StorageInterface
             return ['data' => null, 'time' => null];
         }
 
-        $data = unserialize(substr($contents, 10));
+        $data = unserialize(substr($contents, 10), [
+            'allowed_classes' => false,
+        ]);
 
         // Next, we'll extract the number of minutes that are remaining for a cache
         // so that we can properly retain the time for things like the increment
@@ -83,10 +87,10 @@ class FileStore implements StorageInterface
      * Store an item in the cache for a given number of minutes.
      *
      * @param string $key
-     * @param mixed  $value
-     * @param int    $minutes
+     * @param mixed $value
+     * @param int $minutes
      */
-    public function put($key, $value, $minutes)
+    public function put(string $key, $value, int $minutes): void
     {
         $value = $this->expiration($minutes).serialize($value);
 
@@ -100,10 +104,10 @@ class FileStore implements StorageInterface
      *
      * @param string $path
      */
-    protected function createCacheDirectory($path)
+    protected function createCacheDirectory(string $path): void
     {
-        if ( ! file_exists(dirname($path))) {
-            mkdir(dirname($path), 0777, true);
+        if ( ! file_exists(dirname($path)) && ! mkdir(dirname($path), 0777, true) && ! is_dir($path)) {
+            throw new RuntimeException(sprintf('Can not create a directory "%s"', $path));
         }
     }
 
@@ -111,11 +115,11 @@ class FileStore implements StorageInterface
      * Increment the value of an item in the cache.
      *
      * @param string $key
-     * @param mixed  $value
+     * @param mixed $value
      * 
      * @return int
      */
-    public function increment($key, $value = 1)
+    public function increment(string $key, int $value = 1): int
     {
         $raw = $this->getPayload($key);
 
@@ -130,11 +134,11 @@ class FileStore implements StorageInterface
      * Decrement the value of an item in the cache.
      *
      * @param string $key
-     * @param mixed  $value
+     * @param mixed $value
      * 
      * @return int
      */
-    public function decrement($key, $value = 1)
+    public function decrement(string $key, int $value = 1): int
     {
         return $this->increment($key, $value * -1);
     }
@@ -143,9 +147,9 @@ class FileStore implements StorageInterface
      * Store an item in the cache indefinitely.
      *
      * @param string $key
-     * @param mixed  $value
+     * @param mixed $value
      */
-    public function forever($key, $value)
+    public function forever(string $key, $value): void
     {
         $this->put($key, $value, 0);
     }
@@ -157,7 +161,7 @@ class FileStore implements StorageInterface
      * 
      * @return bool
      */
-    public function forget($key)
+    public function forget(string $key): bool
     {
         $file = $this->path($key);
 
@@ -171,7 +175,7 @@ class FileStore implements StorageInterface
     /**
      * Remove all items from the cache.
      */
-    public function flush()
+    public function flush(): void
     {
         if (is_dir($this->directory)) {
             $files = scandir($this->directory);
@@ -186,17 +190,15 @@ class FileStore implements StorageInterface
         }
     }
 
-    protected function removeDirectory($path)
+    protected function removeDirectory(string $path): void
     {
         $files = glob($path.'/*');
 
         foreach ($files as $file) {
-            is_dir($file) ? removeDirectory($file) : unlink($file);
+            is_dir($file) ? $this->removeDirectory($file) : unlink($file);
         }
 
         rmdir($path);
-
-        return;
     }
 
     /**
@@ -206,7 +208,7 @@ class FileStore implements StorageInterface
      * 
      * @return string
      */
-    protected function path($key)
+    protected function path(string $key): string
     {
         $parts = array_slice(str_split($hash = sha1($key), 2), 0, 2);
 
@@ -220,7 +222,7 @@ class FileStore implements StorageInterface
      * 
      * @return int
      */
-    protected function expiration($minutes)
+    protected function expiration(int $minutes): int
     {
         $time = time() + ($minutes * 60);
 
@@ -236,7 +238,7 @@ class FileStore implements StorageInterface
      *
      * @return string
      */
-    public function getDirectory()
+    public function getDirectory(): string
     {
         return $this->directory;
     }

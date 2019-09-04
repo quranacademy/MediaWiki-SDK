@@ -8,7 +8,7 @@ use LogicException;
 use MediaWiki\Api\ApiCollection;
 use MediaWiki\Bot\Command;
 use MediaWiki\Bot\CommandManager;
-use MediaWiki\Services\ServiceManager;
+use MediaWiki\ApiHelpers\ApiHelpers;
 use MediaWiki\Storage\StorageInterface;
 use MediaWiki\Tests\Stubs\CommandWithoutName;
 use MediaWiki\Tests\Stubs\ExampleCommand;
@@ -447,17 +447,17 @@ class CommandTest extends TestCase
     protected function createProject(): ExampleProject
     {
         $apiCollection = new ApiCollection();
-        $serviceManager = new ServiceManager($apiCollection);
+        $apiHelpers = new ApiHelpers($apiCollection);
 
-        return new ExampleProject($apiCollection, $serviceManager);
+        return new ExampleProject($apiCollection, $apiHelpers);
     }
 
     protected function createProjectMock()
     {
         $apiCollection = new ApiCollection();
-        $serviceManager = new ServiceManager($apiCollection);
+        $apiHelpers = new ApiHelpers($apiCollection);
 
-        return Mockery::mock(ExampleProject::class, [$apiCollection, $serviceManager]);
+        return Mockery::mock(ExampleProject::class, [$apiCollection, $apiHelpers]);
     }
 
     protected function createCommandManager()
