@@ -137,13 +137,41 @@ class Pages extends ApiHelper
      * 
      * @return array
      */
-    public function parse(string $language, string $title, $properties = [], array $additionalParameters = []): array
+    public function parseByTitle(string $language, string $title, $properties = [], array $additionalParameters = []): array
     {
         $properties = is_array($properties) ? implode('|', $properties) : $properties;
 
         $parameters = [
             'action' => 'parse',
-            'page' => $title,
+            'title' => $title,
+            'disableeditsection' => true,
+            'disablelimitreport' => true,
+        ];
+
+        if ($properties !== '') {
+            $parameters['prop'] = $properties;
+        }
+
+        $parameters = array_merge($parameters, $additionalParameters);
+
+        return $this->api($language)->request('POST', $parameters);
+    }
+
+    /**
+     * @param string $language
+     * @param int $pageId
+     * @param array|string $properties
+     * @param array $additionalParameters
+     *
+     * @return array
+     */
+    public function parseByPageId(string $language, int $pageId, $properties = [], array $additionalParameters = []): array
+    {
+        $properties = is_array($properties) ? implode('|', $properties) : $properties;
+
+        $parameters = [
+            'action' => 'parse',
+            'pageid' => $pageId,
             'disableeditsection' => true,
             'disablelimitreport' => true,
         ];
