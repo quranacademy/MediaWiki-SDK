@@ -18,7 +18,7 @@ class Pages extends ApiHelper
      * @param string|null $continue
      * @param string|null $apcontinue
      * @param array $additionalParameters
-     * 
+     *
      * @return array
      */
     public function getList(string $language, ?string $continue = null, ?string $apcontinue = null, array $additionalParameters = []): array
@@ -56,7 +56,7 @@ class Pages extends ApiHelper
      * @param string $title
      * @param array|string $properties
      * @param array $additionalParameters
-     * 
+     *
      * @return array|null
      */
     public function getPageByTitle(string $language, string $title, array $properties = [], array $additionalParameters = []): ?array
@@ -108,7 +108,7 @@ class Pages extends ApiHelper
      * @param string $title
      * @param string $content
      * @param array $additionalParameters
-     * 
+     *
      * @return array
      */
     public function savePage(string $language, string $title, string $content, array $additionalParameters = []): array
@@ -134,7 +134,7 @@ class Pages extends ApiHelper
      * @param string $title
      * @param array|string $properties
      * @param array $additionalParameters
-     * 
+     *
      * @return array
      */
     public function parseByTitle(string $language, string $title, $properties = [], array $additionalParameters = []): array
@@ -143,7 +143,7 @@ class Pages extends ApiHelper
 
         $parameters = [
             'action' => 'parse',
-            'title' => $title,
+            'page' => $title,
             'disableeditsection' => true,
             'disablelimitreport' => true,
         ];
@@ -187,7 +187,7 @@ class Pages extends ApiHelper
 
     /**
      * @param string $language
-     * 
+     *
      * @return string
      */
     protected function getCsrfToken(string $language): string
